@@ -15,14 +15,11 @@ def request(url)
     JSON.parse(response.read_body)
 end
 
-
-
 def build_web_page
     data = request('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10&api_key=Ejl2s0gGWR5laGk53Gf0iGLGft5LPbdGFPVk0gzX') 
     clean_data = data['photos']
     File.open('rovers.html', 'w') do |f|
         f.puts head
-        f.puts "<h1>Mars Rover Photos</h1>"
         clean_data.each do |photo|
             f.puts "<li><img src='#{photo['img_src']}'></li>"
         end
@@ -30,6 +27,24 @@ def build_web_page
     end
 end
 
-camdata = request('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10&api_key=Ejl2s0gGWR5laGk53Gf0iGLGft5LPbdGFPVk0gzX') 
+build_web_page
 
-puts camdata.class
+def photo_count
+    data = request('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10&api_key=Ejl2s0gGWR5laGk53Gf0iGLGft5LPbdGFPVk0gzX')
+    clean_data = data['photos']
+    count = {}
+
+    clean_data.map do |k|
+        if count[k['camera']['name']]
+            count [k['camera']['name']] = count [k['camera']['name']] + 1
+        else
+            count [k['camera']['name']] = 1
+        end
+    end
+
+ puts count
+end
+
+photo_count
+
+
